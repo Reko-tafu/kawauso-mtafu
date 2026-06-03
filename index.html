@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mタフ Evolution 5.22</title>
+    <title>mタフ Evolution 5.23</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: sans-serif; background: #eceff1; padding: 20px; margin: 0; overflow: hidden; }
@@ -107,31 +107,26 @@
 </head>
 <body>
 
-<!-- オープニング画面 -->
 <div id="openingScreen">
     <div class="logo-text">Reko-tafu</div>
 </div>
 
-<!-- コードを映し出すシークレットコンソール -->
 <div id="codeViewer">
     <button class="close-btn" onclick="document.getElementById('codeViewer').style.display='none'">× 閉じる</button>
     <div id="codeContent"></div>
 </div>
 
-<!-- メメインアプリケーションラッパー -->
 <div class="app-wrapper" id="appWrapper">
     
-    <!-- ノベルゲーム風ステージ -->
     <div class="game-stage">
         <div class="mascot-left">
-            <img class="mascot-img" id="mascotImg" src="63456.jpg" alt="カワウソ">
+            <img class="mascot-img" id="mascotImg" src="+9.jpg" alt="カワウソ">
         </div>
         <div class="current-bubble-area" id="liveBubble">
             （...ロード中だわ。ちょっと待っててな！）
         </div>
     </div>
 
-    <!-- 過去のログ＆入力コンテナ -->
     <div class="chat-container">
         <div class="chat-box" id="chatBox">
             <div class="message system-msg" id="statusMsg">システム: mタフの完全記憶システムを同期しています。初回は少し待っててね...</div>
@@ -188,7 +183,7 @@
         "エキサイト": ["マジで！？それ最高じゃん！", "お、テンション高いな！最高！", "うおおお、それマジで熱いテーマだわ！"],
         "スマイル": ["あはは、それウケるわ（（笑））", "たしかに（笑）それ面白いわ。"],
         "通常": ["ほほう、なるほどな！", "なるほどね、そのあたり興味あるんだな。", "良いね、タフもその話題大好きだわ。"],
-        "questions": ["お、タフの意見が聞きたい感じ？タフ的にはさ、", "その質問待ってました（笑）タフの持論を語らせてもらうと、", "うお、そこに目を付けるの鋭いね！タフの意見としてはさ、", "質問のセンスがいいね〜。これに関してはね、"]
+        "questions": ["お、タフの意見が聞きたい感じ？タフ的にはさ、", "その質問待ってました（笑）タフの持論を語らせてもらうと、", "うお、そこに目を付けるの鋭いね！タフの意見としてはさ, ", "質問のセンスがいいね〜。これに関してはね、"]
     };
 
     const questionKeywords = [
@@ -198,7 +193,7 @@
     ];
 
     const genPartsA = ["へえ〜！", "うおお、マジか！", "ほほう、なるほどな…", "え、それめっちゃ気になるわ！"];
-    const genPartsB = ["その[TOPIC]についてなんだけどさ、", "今教えてくれた[TOPIC]の話、", "お前が言ってたその[TOPIC]ってさ, ", "タフもその[TOPIC]に興味津々なんだけど、", "さっきの[TOPIC]の概念、最高じゃん？"];
+    const genPartsB = ["その[TOPIC]についてなんだけどさ、", "今教えてくれた[TOPIC]の話、", "お前が言ってたその[TOPIC]ってさ、", "タフもその[TOPIC]に興味津々なんだけど、", "さっきの[TOPIC]の概念、最高じゃん？"];
     const genPartsC = [
         "それってどんなきっかけで始めた（知った）の？",
         "一番お気に入りというか、テンション上がるポイントってどこだい？",
@@ -211,7 +206,7 @@
         "お〜、なるほどな！『[TEXT]』ってことか、それは深いわ！",
         "あはは、マジで！『[TEXT]』なのは予想外で面白い（笑）",
         "ほうほう、納得だわ。お前が『[TEXT]』って言うなら間違いないね。",
-        "お, いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
+        "お、いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
     ];
     const rally2Questions = [
         "ちなみに、それってこれから先、もっとこうしていきたい！みたいな野望とか予定はあるの？",
@@ -226,7 +221,7 @@
         "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃないぜ。",
         "なるほどね〜。そういう話もたまには悪くないじゃん（笑）",
         "ほほう、お前最近そういうこと考えてるんだ？なんかおもしろいね。",
-        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュンスは伝わるわ（笑）",
+        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わるわ（笑）",
         "ぶははは！お前それマジで言ってる？（笑）相変わらずぶっ飛んでて最高だわ。"
     ];
 
@@ -280,20 +275,18 @@
         document.getElementById("liveBubble").innerText = text;
     }
 
-    // 🌟【大修正】お前が教えてくれたカウント（プラスは1〜9、マイナスは1〜7）を正確にランダムシャッフルする構造へ！
+    // 🌟【大改造】お前の手元にある画像名「+1」〜「+9」、「-1」〜「-7」と100%完全連動！
     function changeMascotEmotion(type) {
         const mascot = document.getElementById("mascotImg");
-        
-        // 画像がパチッと切り替わるゲーム的な小刻みバウンド演出
         mascot.style.transform = "scale(0.95) translateY(3px)";
         
         setTimeout(() => {
             if (type === "positive") {
-                const randNum = Math.floor(Math.random() * 9) + 1; // 💡 1〜9番をランダム選択
-                mascot.src = `kawauso_p${randNum}.jpg`;
+                const randNum = Math.floor(Math.random() * 9) + 1; // 💡 1〜9の数字
+                mascot.src = `+${randNum}.jpg`; // ➡ 例: +5.jpg や +9.jpg
             } else {
-                const randNum = Math.floor(Math.random() * 7) + 1; // 💡 1〜7番をランダム選択
-                mascot.src = `kawauso_n${randNum}.jpg`;
+                const randNum = Math.floor(Math.random() * 7) + 1; // 💡 1〜7の数字
+                mascot.src = `-${randNum}.jpg`; // ➡ 例: -3.jpg
             }
             mascot.style.transform = "scale(1.0) translateY(0px)";
         }, 100);
@@ -380,7 +373,7 @@
             changeMascotEmotion("positive");
             setLiveMascotSpeech("（...！特別なコマンドを検知したよ）");
             setTimeout(() => {
-                const secretText = "Reko「まい誕生日おめでとう。大好きだよ。たくさん旅行して、いっぱい遊ぼうね。都井岬とか、郡上祭りとか！テニス，スノボも行きたい！あと海外も行おうね！台湾のタピオカと、お肉とか！焼肉もいこー！笑いつもありがとう、一緒にいて楽しくて幸せ！でもでも、体調には気を付けてね笑～れいより」";
+                const secretText = "Reko「まい誕生日おめでとう。大好きだよ。たくさん旅行して、いっぱい遊ぼうね。都井岬とか、郡上祭りとか！テニス，スノボも行きたい！あと海外も行こうね！台湾のタピオカと、お肉とか！焼肉もいこー！笑いつもありがとう、一緒にいて楽しくて幸せ！でもでも、体調には気を付けてね笑～れいより」";
                 setLiveMascotSpeech(secretText);
                 addMessage(secretText, "ai-msg");
             }, 800);
@@ -412,7 +405,6 @@
             setTimeout(() => {
                 rallyCount--; 
                 
-                // お前の言葉にポジティブ記号があればプラスのポーズ群からシャッフル！
                 if (userText.includes("！") || userText.includes("!") || userText.includes("笑") || userText.includes("草") || userText.includes("w")) {
                     changeMascotEmotion("positive");
                 } else {
@@ -455,7 +447,7 @@
             let dynamicQuestion = generateDynamicQuestion(unknownWord);
             
             setTimeout(() => {
-                changeMascotEmotion("positive"); // 新しい言葉を覚えてプラスのイラスト群からシャッフル！
+                changeMascotEmotion("positive");
                 let learnText = `なるほどね、覚えたわ！これからは『${unknownWord}』って言われたら『${newReply}』って返すよ。ありがとな！\n\n${dynamicQuestion}、${userName}？`;
                 setLiveMascotSpeech(learnText);
                 addMessage(`mタフ: ${learnText}`, "ai-msg");
@@ -481,11 +473,11 @@
 
         let isTsukommi = TsukommiPool.some(t => userText.includes(t));
         if (isTsukommi && lastAiKeyword) {
-            changeMascotEmotion("negative"); // ツッコミを喰らったらマイナスのイラスト群からシャッフル！
+            changeMascotEmotion("negative"); 
             topicHistoryStack = topicHistoryStack.filter(t => t !== lastAiKeyword);
             let previousTopic = topicHistoryStack[topicHistoryStack.length - 1];
             if (previousTopic) {
-                let text1 = `あ、悪りぃ！『${lastAiKeyword}』の話は的外れだったか（（笑））`;
+                let text1 = `あ、悪りぃ！『${lastAiKeyword}』の話は的外れだったか（笑）`;
                 setLiveMascotSpeech(text1);
                 addMessage(`mタフ: ${text1}`, "ai-msg");
                 setTimeout(() => {
@@ -495,7 +487,7 @@
                 }, 1000);
                 lastAiKeyword = previousTopic;
             } else {
-                let text1 = `あ、すまんすまん！『${lastAiKeyword}』の話はループだったな（（笑））\n\n仕切り直そうぜ、${userName}。他に今、何について考えてるか教えてよ`;
+                let text1 = `あ、すまんすまん！『${lastAiKeyword}』の話はループだったな（笑）\n\n仕切り直そうぜ、${userName}。他に今、何について考えてるか教えてよ`;
                 setLiveMascotSpeech(text1);
                 addMessage(`mタフ: ${text1}`, "ai-msg");
                 lastAiKeyword = "";
@@ -536,7 +528,7 @@
 
         // ⭕ 引き出しにヒットした場合
         if (maxSim >= 0.70) { 
-            changeMascotEmotion("positive"); // ヒット時はプラスのイラスト群（1〜9）からシャッフル！
+            changeMascotEmotion("positive"); 
             const matchedKeyword = keywords[bestMatchIdx];
             const replies = topicPool[matchedKeyword];
             const randomReply = replies[Math.floor(Math.random() * replies.length)];
@@ -576,18 +568,18 @@
                 addMessage(`mタフ: ${finalReply}`, "ai-msg");
             }, 400);
         } 
-        // ❌ 引き出しにかすりもしなかった場合の【大人の雑談お茶濁しガード】
+        // ❌ 引き出しにかすりもしなかった場合
         else {
             let wantToTeach = learningTriggers.some(trigger => userText.includes(trigger));
             if (wantToTeach) {
-                changeMascotEmotion("negative"); // 知らない言葉の時はマイナスのイラスト群（1〜7）からシャッフル！
+                changeMascotEmotion("negative"); 
                 let cleanWord = userText.replace(/[(教えて|おしえて|覚え|おぼえ|意味は|意味を)]/g, "");
                 let teachText = `お、新しい言葉を教えてくれるんか？『${cleanWord}』ってどういう意味？なんて返せばいいか教えてよ、${userName}`;
                 setLiveMascotSpeech(teachText);
                 addMessage(`mタフ: ${teachText}`, "ai-msg");
                 isLearning = true; unknownWord = cleanWord;
             } else {
-                changeMascotEmotion("negative"); // いなし雑談の時もマイナス群からシャッフル！
+                changeMascotEmotion("negative"); 
                 let randomChitchat = chitchatPool[Math.floor(Math.random() * chitchatPool.length)];
                 let randomDefaultFollow = defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)];
                 let fullText = `${randomChitchat}\n\n${randomDefaultFollow}`;
