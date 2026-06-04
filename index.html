@@ -3,7 +3,7 @@
 <html lang="ja"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mタフ Evolution 5.70</title>
+    <title>mタフ Evolution 5.75</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: sans-serif; background: #eceff1; padding: 20px; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
@@ -93,7 +93,7 @@
         <div class="mascot-area">
             <img class="mascot-img" id="mascotImg" src="-1.jpg" alt="カワウソ">
         </div>
-        <div class="current-bubble-area" id="liveBubble">タフのの会話モデルをロード中です。最初のダウンロードは1〜2分かかるから、コンソール（F12）を見ながらちょっと待ってて。</div>
+        <div class="current-bubble-area" id="liveBubble">タフの会話モデルをロード中です。最初のダウンロードは1〜2分かかるから、コンソール（F12）を見ながらちょっと待っててね。</div>
     </div>
 
     <div class="input-area">
@@ -104,7 +104,7 @@
 
 <script>
     let extractor;
-    let generator; // 🌟新設：ブラウザ内文字生成AI用の変数
+    let generator; 
     let chatTurns = 0;
     
     let currentStoryContext = ""; 
@@ -116,24 +116,24 @@
     let rallyTopic = "";
     let mtafuMood = 50; 
 
-    // デフォルトのベース記憶
+    // デフォルトのベース記憶（柔らか口調に修正）
     const defaultTopicPool = {
-        "こんにちは": ["こんにちは！色々話そう", "よぉ、お疲れ。調子はどうだ"],
-        "バイバイ": ["おう、またね。気をつけて", "じゃあね。またいつでも話しかけてよ"],
+        "こんにちは": ["こんにちは！色々話そうね", "やっほー、お疲れ様。調子はどうかな？"],
+        "バイバイ": ["うん、またね。気をつけてね", "じゃあね。またいつでも話しかけてよぉ"],
         "ゲーム": [
-            "最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味あるんだよね。[WORD]の話ももっと聞きたい。", 
-            "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うわ。[WORD]とかもその辺のロジックが効いてくるよね。"
+            "最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味があるんだよね。[WORD]の話ももっと聞きたいな。", 
+            "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うんだよね。[WORD]とかもその辺のロジックが効いてくるよね。"
         ],
         "生物・遺伝": [
-            "生き物の体って不思議だよな。染色体の異常とか、遺伝子の突然変異圧とかで進化の方向が変わるの、マジでロマンあるわ。[WORD]の仕組みとかも奥が深そうだしさ。", 
-            "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよな。[WORD]に関する遺伝の規則性も気になる。"
+            "生き物の体って不思議だよね。染色体の異常とか、遺伝子の突然変異圧とかで進化の方向が変わるの、マジでロマンがあるなぁ。[WORD]の仕組みとかも奥が深そうだしさ。", 
+            "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよね。[WORD]に関する遺伝の規則性も気になるな。"
         ],
         "古生物・化石": [
-            "大昔の絶滅イベント（P/T境界とかK/Pg境界）の話、ゾクゾクしない？アンモナイトの殻の『付加成長』のギザギザ模様（縫合線）とか、あれ進化の歴史が刻まれてて最高にカッコいいんだよ。お前が言った[WORD]も、まさにその歴史の一部じゃん？", 
-            "プロレカニティダス目の絶滅を生き延びた戦略とか、古生物の進化ってデータサイエンス的に見てもめちゃくちゃ面白い。[WORD]のデータとか残ってたら最高なんだけどな。"
+            "大昔の絶滅イベント（P/T境界とかK/Pg境界）の話、ゾクゾクしない？アンモナイトの殻の『付加成長』のギザギザ模様（縫合線）とか、あれ進化の歴史が刻まれてて最高にカッコいいんだよ。お前が言った[WORD]も、まさにその歴史の一部だよね。", 
+            "プロレカニティダス目の絶滅を生き延びた戦略とか、古生物の進化ってデータサイエンス的に見てもめちゃくちゃ面白いよ。[WORD]のデータとか残ってたら最高なんだけどな。"
         ],
-        "データサイエンス": ["データ分析とか統計（ANOVAやTukeyの多重比較とか）って、一見地味だけど、研究の仮説をガチッと証明するための最強の武器だよな。Pythonで[WORD]のデータを視覚化するの楽しいし。"],
-        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入狙えるようなガチのプロフェッショナルを目指すのって、あこがれるねよ。[WORD]の分野でもそういうプロフェッショナルが求められてるし。"]
+        "データサイエンス": ["データ分析とか統計（ANOVAやTukeyの多重比較とか）って、一見地味だけど、研究の仮説をガチッと証明するための最強の武器だよね。Pythonで[WORD]のデータを視覚化するの楽しいし。"],
+        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入を狙えるようなガチのプロフェッショナルを目指すのって、あこがれちゃうよね。[WORD]の分野でもそういうプロフェッショナルが求められてるしね。"]
     };
 
     const defaultSemanticWeb = {
@@ -145,12 +145,12 @@
 
     const defaultFollowUpPool = {
         "ゲーム": ["最近どんなゲームやってる？おすすめのロジックとかあれば教えてよ。", "ちなみに3Dゲーム作るなら、グラフィック重視かシステム重視かどっち派？"],
-        "生物・遺伝": ["遺伝の話って深掘りするとキリがないよな。生き物の進化で一番不思議に思うことって何？", "人間が交配をコントロールしてきた歴史も面白いよね。カイコ以外に気になる家畜化された生物とかいる？"],
-        "古生物・化石": ["化石の模様から当時の生態系をデータ分析するの、マジで熱いよな。どの時代の絶滅イベントに一番興味ある？", "プロレカニティダス目の生き残り戦略とか、現代のビジネスや生存戦略にも応用できそうじゃない？"],
-        "データサイエンス": ["統計って、データの見せる方一つで説得力がガラッと変わるから面白いよね。レイはPythonの視覚化でよく使うライブラリとかある？"],
-        "キャリア・将来": ["ガチのプロフェッショナルとして高収入を狙うの、男のロマンだよな。将来、どんな専門スキルを一番極めたいと考えてる？"],
+        "生物・遺伝": ["遺伝の話って深掘りするとキリがないよね。生き物の進化で一番不思議に思うことって何？", "人間が交配をコントロールしてきた歴史も面白いよね。カイコ以外に気になる家畜化された生物とかいる？"],
+        "古生物・化石": ["化石の模様から当時の生態系をデータ分析するの、マジで熱いよね。どの時代の絶滅イベントに一番興味ある？", "プロレカニティダス目の生き残り戦略とか、現代のビジネスや生存戦略にも応用できそうじゃない？"],
+        "データサイエンス": ["統計って、データの見せ方一つで説得力がガラッと変わるから面白いよね。Pythonの視覚化でよく使うライブラリとかある？"],
+        "キャリア・将来": ["ガチのプロフェッショナルとして高収入を狙うの、男のロマンだよね。将来、どんな専門スキルを一番極めたいと考えてる？"],
         "こんにちは": ["今日はどんな1日だった？最近気になってる話題とかあれば、タフに教えてよ！"],
-        "デフォルト": ["これについて、どう思う？もっと詳しく聞かせてよ！", "タフはこれめっちゃ面白い概念段階だと思うんだけど、意見を聞いてみたいな。"]
+        "デフォルト": ["これについて、どう思う？もっと詳しく聞かせてよ！", "タフはこれめっちゃ面白い段階だと思うんだけど、意見を聞いてみたいな。"]
     };
 
     const synthesisParts = {
@@ -158,19 +158,19 @@
         "endings_normal": ["ってタフは思うわけよ！", "って感じだな、間違いない。", "のさ（（笑））", "なんだよね〜。"],
         "endings_question": ["って思うんだけど、どうだい？", "についてどう捉えてる？", "の意見が聞きたいな！"],
         "sullen_replies": [
-            "……別に。今ちょっとそういう話する気分じゃないわ）",
-            "あー、その話ね。今はなんか頭回らないからまた今度にして。",
-            "ふーん、そっか。……というかさ、お前さっきからちょっとトゲなくない？（笑）",
-            "うーん、なんだろな）"
+            "……別に。今ちょっとそういう話をする気分じゃないんだよね（笑）",
+            "あー、その話ね。今はなんか頭が回らないからまた今度にしてほしいな。",
+            "ふーん、そっか。……というかさ、お前さっきからちょっとトゲなくない？（（笑））",
+            "うーん、なんだろな。ちょっと疲れちゃった（笑）"
         ],
         "excited_joins": ["マジでさ！", "うおおお、聞いてくれよ！", "これ最高なんだけどさ！"]
     };
 
     const aizuchiMatrix = {
-        "ショート": ["あ〜、その話か！", "お、〇〇ね。", "なるほどね、分かるわ。"],
-        "エキサイト": ["マジで！？それ最高じゃん！", "お、テンション高いな！最高！", "うおおお、それマジで熱いテーマだわ！"],
-        "スマイル": ["あはは、それウケるわ（（笑））", "たしかに（笑）それ面白いわ。"],
-        "通常": ["ほほう、なるほどな！", "なるほどね、そのあたり興味あるんだな。", "良いね、タフもその話題大好きだわ。"],
+        "ショート": ["あ〜、その話か！", "お、〇〇ね。", "なるほどね、分かる気がする。"],
+        "エキサイト": ["マジで！？それ最高じゃん！", "お、テンション高いね！最高！", "うおおお、それマジで熱いテーマだわ！"],
+        "スマイル": ["あはは、それウケるわ（（笑））", "たしかに（笑）それ面白いね。"],
+        "通常": ["ほほう、なるほどね！", "なるほどなぁ、そのあたり興味あるんだね。", "良いね、タフもその話題大好きだよ。"],
         "questions": ["お、タフの意見が聞きたい感じ？タフ的にはさ、", "その質問待ってました（（笑））タフの持論を語らせてもらうと、", "うお、そこに目を付けるの鋭いね！タフの意見としてはさ, ", "質問のセンスがいいね〜。これに関してはね、"]
     };
 
@@ -191,7 +191,7 @@
     ];
 
     const rally2Aizuchi = [
-        "お〜、なるほどな！『[TEXT]』ってことか、それは深いわ！",
+        "お〜、なるほどね！『[TEXT]』ってことか、それは深いわ！",
         "あはは、マジで！『[TEXT]』なのは予想外で面白い（（笑））",
         "ほうほう、納得だわ。お前が『[TEXT]』って言うなら間違いないね。",
         "お、いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
@@ -204,9 +204,9 @@
     ];
 
     const chitchatPool = [
-        "あはは、それまたマニアックなところ攻めてくるな〜（（笑））",
-        "うーん、そこはタフの脳みそがまだ追いついてないわ（笑）ちょっと悔しいな。",
-        "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃない。",
+        "あはは、それまたマニアックなところ攻めてくるね〜（（笑））",
+        "うーん、そこはタフの脳みそがまだ追いついてないや（笑）ちょっと悔しいな。",
+        "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃないよ。",
         "なるほどね〜。そういう話もたまには悪くないじゃん（（笑））",
         "ほほう、お前最近そういうこと考えてるんだ？なんかおもしろいね。",
         "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わる（笑）",
@@ -216,10 +216,10 @@
     const learningTriggers = ["教えて", "おしえて", "覚え", "覚える", "おぼえ", "意味は", "意味を", "言葉だよ", "単語だよ"];
 
     const timeGreetingMatrix = {
-        "morning": ["お、早起きじゃん！今日も最高にいい日にしよう。", "やほ、朝からお疲れ！眠気はバッチリ覚めたかい？"],
-        "noon": ["お疲れ！昼飯はもう食ったか？午後もボチボチいこうや。", "やほやほ、ちょうど昼どきだな。ひと息つきながら話そうぜ。"],
-        "evening": ["今日もお疲れさん！夜はゆっくり趣味の話でもしよう。", "や、お疲れ。今日の調子はどうだったよ？"],
-        "midnight": ["おいおい、こんな夜更かしして何してんだ？（（笑））付き合うけどさ。", "もぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（笑）"]
+        "morning": ["お、早起きじゃん！今日も最高にいい日にしようね。", "やほ、朝からお疲れ！眠気はバッチリ覚めたかい？"],
+        "noon": ["お疲れ！昼飯はもう食った？午後もボチボチいこうや。", "やほやほ、ちょうど昼どきだな。ひと息つきながら話そうぜ。"],
+        "evening": ["今日もお疲れさん！夜はゆっくり趣味の話でもしようか。", "や、お疲れ様。今日の調子はどうだったよ？"],
+        "midnight": ["おいおい、こんな夜更かしして何してんだ？（（笑））付き合うけどさ。", "もぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（（笑））"]
     };
 
     let topicPool = JSON.parse(localStorage.getItem("mtafu_topicPool")) || defaultTopicPool;
@@ -279,7 +279,6 @@
         }, 100);
     }
 
-    // 外部ネット検索関数
     async function searchWebKnowledge(query) {
         try {
             const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
@@ -294,15 +293,9 @@
         }
     }
 
-    // 🌟【大改造】起動時の処理。埋め込み用モデルと、文字生成用の超軽量モデル（LLM）の2つを同時にロード
     window.addEventListener('DOMContentLoaded', async () => {
-        document.getElementById("appWrapper").style.display = "flex";
         try {
-            // 1. 類似度計算用の脳をロード
             extractor = await window.pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
-            
-            // 2. 🌟その場で思考・解釈してフリートークを紡ぐためのテキスト生成AI（LLM）をロード！
-            // 約900MBの軽量モデルです。初回のみブラウザのDLロードが走ります。
             generator = await window.pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
             
             keywords = Object.keys(topicPool);
@@ -314,7 +307,7 @@
             
             if (userName) {
                 const timeGreeting = getTimeBasedGreeting();
-                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そう！\n（現在の脳みそ：完全ローカルLLM生成同期完了）`);
+                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そうね！\n（現在の脳みそ：完全ローカルLLM生成同期完了）`);
             } else {
                 setLiveMascotSpeech("やあ！起動したよ。まずはそっちの名前を教えて！");
             }
@@ -377,7 +370,7 @@
         if (isWaitingForName) {
             userName = userText; isWaitingForName = false;
             document.getElementById("userInput").placeholder = "メッセージを入力...";
-            let welcome = `よろしくな、${userName}。色々話しながら、タフの知らないことも教えてよ`;
+            let welcome = `よろしくね、${userName}。色々話しながら、タフの知らないことも教えてよぉ`;
             changeMascotEmotion("positive");
             setLiveMascotSpeech(welcome);
             currentStoryContext = `最初に${userName}が挨拶して会話が始まった。`;
@@ -418,7 +411,7 @@
             let extractedWords = newReply.split(/[\s、。！？」]+/).filter(w => w.length > 1);
             semanticWeb[unknownWord] = extractedWords;
             
-            const coreGenres = ["ゲーム", "生物・遺伝", "古生物・化石", "データサイエンス"];
+            const coreGenres = ["ゲーム", "生物・遺伝", "古生物・化化石", "データサイエンス"];
             let maxGenreSim = -1.0; let bestGenre = "";
             const replyEmbedding = await getEmbedding(newReply);
             for (let genre of coreGenres) {
@@ -464,7 +457,7 @@
             changeMascotEmotion("negative"); 
             topicHistoryStack = topicHistoryStack.filter(t => t !== lastAiKeyword);
             setTimeout(() => {
-                setLiveMascotSpeech(mtafuMood < 30 ? `もお、うるさい（（笑））『${lastAiKeyword}』の話が違うならもういいよ。` : `あ、悪るい！『${lastAiKeyword}』の話は的外れだったか（笑）仕切り直そう。`);
+                setLiveMascotSpeech(mtafuMood < 30 ? `もお、うるさいなぁ（（笑））『${lastAiKeyword}』の話が違うならもういいよ。` : `あ、悪るい！『${lastAiKeyword}』の話は的外れだったか（（笑））仕切り直そうね。`);
             }, 400);
             return;
         }
@@ -497,7 +490,7 @@
             if (sim > maxSim) { maxSim = sim; bestMatchIdx = i; }
         }
 
-        // ⭕ 引き出しにヒットした場合（これまでの爆速合成エンジンで返す）
+        // ⭕ 引き出しにヒットした場合
         if (maxSim >= 0.70) { 
             changeMascotEmotion(mtafuMood >= 40 ? "positive" : "negative"); 
             const matchedKeyword = keywords[bestMatchIdx];
@@ -538,7 +531,7 @@
                 setLiveMascotSpeech(finalReply);
             }, 400);
         } 
-        // 🌟【新機軸】引き出しにない場合：ネット検索 ＋ 完全ローカル生成AIによる「解釈生成」ルート発動！
+        // ❌ 引き出しにない場合：ネット検索 ＋ 完全ローカル生成AIによる「解釈生成」ルート
         else {
             let searchQuery = userText.replace(/[(教えて|おしえて|意味は|意味を|について|って|何|？|\?)]/g, "").trim();
             if (searchQuery.length > 1) {
@@ -546,30 +539,27 @@
                 
                 if (webSnippet) {
                     changeMascotEmotion("positive");
-                    setLiveMascotSpeech("（裏でネットを検索した。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待って...）");
+                    setLiveMascotSpeech("（裏でネットを検索したよ。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待ってね...）");
 
-                    // 🧠ブラウザの中のAIに「タフになりきって、この検索結果を解釈しろ」と命令文を作る（Chatプロンプト）
                     const prompt = `<|im_start|>system
-お前は少し生意気でフランクなカワウソのキャラクター「タフ」だ。
-敬語は絶対に使うな。「〜だ」「〜じゃん？」「（笑）」などの男らしいフランクな口調で喋れ。
+お前はフランクで少しマイルドなカワウソのキャラクター「タフ」だ。
+敬語は絶対に使うな。「〜だよ」「〜じゃん？」「（笑）」などの親しみやすいフランクな口調で喋れ。
 次の【ネットの情報】を読んで、その内容を1文だけでユーザーに分かりやすく解釈・説明してあげて。<|im_end|>
 <|im_start|>user
 【ネットの情報】:${webSnippet}<|im_end|>
 <|im_start|>assistant\n`;
 
                     try {
-                        // 🌟ローカルの生成AIをここで実際にフル稼働させて、文字を作らせる！
                         const output = await generator(prompt, {
                             max_new_tokens: 70,
                             temperature: 0.6,
                             do_sample: true
                         });
 
-                        // 生成された完全オリジナルの解釈文をパース
                         let rawGeneratedText = output[0].generated_text;
                         let generatedReply = rawGeneratedText.split('<|im_start|>assistant\n').pop().replace(/<\|im_end\|>/g, "").trim();
 
-                        let webReply = `（機嫌：${mtafuMood} / 🌐ローカルLLM思考解釈モード）\n\nおっと、その話はタフの脳内に知恵がなかったから、今ネットで調べてタフなりに解釈してみたわ！\n\n${generatedReply}\n\nぶっちゃけネットのデータにはそう書いてあったけど、お前はどう思うよ？`;
+                        let webReply = `（機嫌：${mtafuMood} / 🌐ローカルLLM思考解釈モード）\n\nおっと、その話はタフの脳内に知恵がなかったから、今ネットで調べてタフなりに解釈してみたよ！\n\n${generatedReply}\n\nぶっちゃけネットのデータにはそう書いてあったけど、お前はどう思うかな？`;
                         setLiveMascotSpeech(webReply);
                         return;
                     } catch (genError) {
@@ -580,9 +570,14 @@
                 }
             }
 
-            // 検索・生成ともに動かなかった場合のセーフティ
+            // 検索・生成ともに動かなかった場合のセーフティ（バグ修復箇所）
             changeMascotEmotion("negative"); 
-            let fullText = mtafuMood < 30 ? `（機嫌：${mtafuMood}）\n\nなんか今つまんなーい。もっとおもろい話して！ : `（機嫌：${mtafuMood}）\n\n${chitchatPool[Math.floor(Math.random() * chitchatPool.length)]}\n\n${defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)]}`;
+            let fullText = "";
+            if (mtafuMood < 30) {
+                fullText = `（機嫌：${mtafuMood}）\n\nなんか今つまんなーい。もっとおもろい話してよぉ（（笑））`;
+            } else {
+                fullText = `（機嫌：${mtafuMood}）\n\n${chitchatPool[Math.floor(Math.random() * chitchatPool.length)]}\n\n${defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)]}`;
+            }
             setLiveMascotSpeech(fullText);
         }
     }
