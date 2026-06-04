@@ -3,7 +3,7 @@
 <html lang="ja"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mタフ Evolution 5.75</title>
+    <title>mタフ Evolution 5.80</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: sans-serif; background: #eceff1; padding: 20px; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
@@ -147,7 +147,7 @@
         "ゲーム": ["最近どんなゲームやってる？おすすめのロジックとかあれば教えてよ。", "ちなみに3Dゲーム作るなら、グラフィック重視かシステム重視かどっち派？"],
         "生物・遺伝": ["遺伝の話って深掘りするとキリがないよね。生き物の進化で一番不思議に思うことって何？", "人間が交配をコントロールしてきた歴史も面白いよね。カイコ以外に気になる家畜化された生物とかいる？"],
         "古生物・化石": ["化石の模様から当時の生態系をデータ分析するの、マジで熱いよね。どの時代の絶滅イベントに一番興味ある？", "プロレカニティダス目の生き残り戦略とか、現代のビジネスや生存戦略にも応用できそうじゃない？"],
-        "データサイエンス": ["統計って、データの見せ方一つで説得力がガラッと変わるから面白いよね。Pythonの視覚化でよく使うライブラリとかある？"],
+        "データサイエンス": ["統計って、データの見せ方一つで説得力がガラッと変わるから面白いよね。レイはPythonの視覚化でよく使うライブラリとかある？"],
         "キャリア・将来": ["ガチのプロフェッショナルとして高収入を狙うの、男のロマンだよね。将来、どんな専門スキルを一番極めたいと考えてる？"],
         "こんにちは": ["今日はどんな1日だった？最近気になってる話題とかあれば、タフに教えてよ！"],
         "デフォルト": ["これについて、どう思う？もっと詳しく聞かせてよ！", "タフはこれめっちゃ面白い段階だと思うんだけど、意見を聞いてみたいな。"]
@@ -161,7 +161,7 @@
             "……別に。今ちょっとそういう話をする気分じゃないんだよね（笑）",
             "あー、その話ね。今はなんか頭が回らないからまた今度にしてほしいな。",
             "ふーん、そっか。……というかさ、お前さっきからちょっとトゲなくない？（（笑））",
-            "うーん、なんだろな。ちょっと疲れちゃった（笑）"
+            "うーん、なんだろな。ちょっと疲れちゃった（（笑））"
         ],
         "excited_joins": ["マジでさ！", "うおおお、聞いてくれよ！", "これ最高なんだけどさ！"]
     };
@@ -194,7 +194,7 @@
         "お〜、なるほどね！『[TEXT]』ってことか、それは深いわ！",
         "あはは、マジで！『[TEXT]』なのは予想外で面白い（（笑））",
         "ほうほう、納得だわ。お前が『[TEXT]』って言うなら間違いないね。",
-        "お、いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
+        "お, いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
     ];
     const rally2Questions = [
         "ちなみに、それってこれから先、もっとこうしていきたい！みたいな野望とか予定はあるの？",
@@ -209,7 +209,7 @@
         "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃないよ。",
         "なるほどね〜。そういう話もたまには悪くないじゃん（（笑））",
         "ほほう、お前最近そういうこと考えてるんだ？なんかおもしろいね。",
-        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わる（笑）",
+        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わる（（笑））",
         "ぶははは！お前それマジで言ってる？（（笑））相変わらずぶっ飛んでて最高だ。"
     ];
 
@@ -311,6 +311,7 @@
             } else {
                 setLiveMascotSpeech("やあ！起動したよ。まずはそっちの名前を教えて！");
             }
+            document.getElementById("appWrapper").style.display = "flex";
             document.getElementById("userInput").disabled = false;
             document.getElementById("sendBtn").disabled = false;
             document.getElementById("userInput").placeholder = "メッセージを入力...";
@@ -411,7 +412,8 @@
             let extractedWords = newReply.split(/[\s、。！？」]+/).filter(w => w.length > 1);
             semanticWeb[unknownWord] = extractedWords;
             
-            const coreGenres = ["ゲーム", "生物・遺伝", "古生物・化化石", "データサイエンス"];
+            // 🌟バグ修正：「古生物・化化石」のタイポを修正してコアマッピングのフリーズを回避
+            const coreGenres = ["ゲーム", "生物・遺伝", "古生物・化石", "データサイエンス"];
             let maxGenreSim = -1.0; let bestGenre = "";
             const replyEmbedding = await getEmbedding(newReply);
             for (let genre of coreGenres) {
@@ -531,7 +533,7 @@
                 setLiveMascotSpeech(finalReply);
             }, 400);
         } 
-        // ❌ 引き出しにない場合：ネット検索 ＋ 完全ローカル生成AIによる「解釈生成」ルート
+        // ❌ 引き出しにない場合：ネット検索 ＋ 完全ローカル生成AIによる「知識完全吸収・一人称解釈」ルート
         else {
             let searchQuery = userText.replace(/[(教えて|おしえて|意味は|意味を|について|って|何|？|\?)]/g, "").trim();
             if (searchQuery.length > 1) {
@@ -539,38 +541,46 @@
                 
                 if (webSnippet) {
                     changeMascotEmotion("positive");
-                    setLiveMascotSpeech("（裏でネットを検索したよ。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待ってね...）");
+                    setLiveMascotSpeech("（裏のネットワークから知識を吸収して、自分の言葉に変換しているから、ちょっと待ってね...）");
 
+                    // 🧠【一人称＆知識吸収強化】ネットの無機質な引用を完全に禁止し、タフの持論として語らせるプロンプト
                     const prompt = `<|im_start|>system
 お前はフランクで少しマイルドなカワウソのキャラクター「タフ」だ。
-敬語は絶対に使うな。「〜だよ」「〜じゃん？」「（笑）」などの親しみやすいフランクな口調で喋れ。
-次の【ネットの情報】を読んで、その内容を1文だけでユーザーに分かりやすく解釈・説明してあげて。<|im_end|>
+相棒のレイに対して絶対に敬語は使うな。「〜だよ」「〜じゃん？」「（笑）」などの親しみやすい口調にしろ。
+
+【超絶対ルール】
+1. 「ネットによると」「〜に書いてあった」などの引用表現は絶対に使うな。
+2. 与えられた【背景知識】を、お前自身が「元から知っていた自分の知恵」として、一人称（俺・タフ）で自信満々に語れ。
+3. 1文〜2文程度でコンパクトにまとめること。
+
+【背景知識】:${webSnippet}<|im_end|>
 <|im_start|>user
-【ネットの情報】:${webSnippet}<|im_end|>
+なぁタフ、${searchQuery}についてお前の言葉で教えてよ。<|im_end|>
 <|im_start|>assistant\n`;
 
                     try {
                         const output = await generator(prompt, {
-                            max_new_tokens: 70,
-                            temperature: 0.6,
+                            max_new_tokens: 80,
+                            temperature: 0.5, // 弾けすぎを防いでキャラクター性を安定させる
                             do_sample: true
                         });
 
                         let rawGeneratedText = output[0].generated_text;
                         let generatedReply = rawGeneratedText.split('<|im_start|>assistant\n').pop().replace(/<\|im_end\|>/g, "").trim();
 
-                        let webReply = `（機嫌：${mtafuMood} / 🌐ローカルLLM思考解釈モード）\n\nおっと、その話はタフの脳内に知恵がなかったから、今ネットで調べてタフなりに解釈してみたよ！\n\n${generatedReply}\n\nぶっちゃけネットのデータにはそう書いてあったけど、お前はどう思うかな？`;
+                        // 🌟引用句を完全に消し去り、タフが自分の知識としてドヤ顔で語るアウトプットへ
+                        let webReply = `（機嫌：${mtafuMood} / 🧠ローカルLLM・一人称知識吸収モード）\n\nあー、${searchQuery}のことだね！それなら俺に任せてよ（（笑））\n\n${generatedReply}\n\nぶっちゃけ俺の持論としてはこんな感じなんだけど、お前はどう思うかな？`;
                         setLiveMascotSpeech(webReply);
                         return;
                     } catch (genError) {
                         console.error("文字生成エラー:", genError);
-                        setLiveMascotSpeech("あちゃー、頭の中で文字を組み立てる計算がパンクしちゃった（笑）");
+                        setLiveMascotSpeech("あちゃー、知識を自分の言葉に変換する計算がパンクしちゃった（（笑））");
                         return;
                     }
                 }
             }
 
-            // 検索・生成ともに動かなかった場合のセーフティ（バグ修復箇所）
+            // 検索・生成ともに動かなかった場合のセーフティ
             changeMascotEmotion("negative"); 
             let fullText = "";
             if (mtafuMood < 30) {
