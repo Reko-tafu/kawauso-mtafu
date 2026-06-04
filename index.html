@@ -1,92 +1,72 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
+/* --- mタフ・システム設計書 --- */
+
+<html lang="ja"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mタフ Evolution 5.23</title>
+    <title>mタフ Evolution 5.70</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: sans-serif; background: #eceff1; padding: 20px; margin: 0; overflow: hidden; }
+        body { font-family: sans-serif; background: #eceff1; padding: 20px; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
         
-        /* 全体をスマホ幅にフィットさせるラッパー */
-        .app-wrapper { width: 100%; max-width: 500px; margin: 0 auto; display: none; padding-top: 5px; }
+        /* 全体をスマホ幅にフィットさせるラッパー（高さを画面いっぱいに使う） */
+        .app-wrapper { width: 100%; max-width: 500px; height: 100%; max-height: 650px; padding: 10px; display: none; flex-direction: column; gap: 15px; }
 
-        /* カワウソと最新のセリフを横並びにするノベルゲーム風ステージ */
+        /* イラストと吹き出しを大迫力にするメインステージ */
         .game-stage {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 10px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            border: 2px solid #cfd8dc;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 24px;
+            border: 3px solid #cfd8dc;
+            flex: 1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
         }
         
-        /* 左側：大きく表示するカワウソエリア */
-        .mascot-left {
-            flex: 0 0 110px;
+        /* イラストエリア */
+        .mascot-area {
             text-align: center;
+            margin-top: 10px;
         }
         .mascot-img {
-            width: 110px;
-            height: 110px;
+            width: 160px;
+            height: 160px;
             object-fit: contain;
-            border-radius: 15px;
-            filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15));
+            border-radius: 24px;
+            filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.2));
             transition: transform 0.2s ease;
         }
 
-        /* 右側：カワウソのすぐ横に配置する最新メッセージ専用の吹き出し */
+        /* 吹き出しエリア */
         .current-bubble-area {
+            width: 100%;
             flex: 1;
             position: relative;
             background: white;
-            border: 2px solid #007aff;
-            border-radius: 16px;
-            padding: 12px;
-            min-height: 90px;
-            box-shadow: 0 4px 15px rgba(0,122,255,0.1);
+            border: 3px solid #007aff;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 6px 20px rgba(0,122,255,0.15);
             display: flex;
-            align-items: center;
-            font-size: 0.95rem;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            font-size: 1.05rem;
             color: #1c1c1e;
-            line-height: 1.4;
-        }
-        /* 左側のカワウソに向けて突き出る吹き出しのツノ */
-        .current-bubble-area::before {
-            content: ""; position: absolute; top: 35px; left: -10px; width: 0; height: 0;
-            border-top: 0px solid transparent;
-            border-right: 10px solid #007aff;
-            border-bottom: 10px solid transparent;
-        }
-        .current-bubble-area::after {
-            content: ""; position: absolute; top: 35px; left: -7px; width: 0; height: 0;
-            border-top: 0px solid transparent;
-            border-right: 9px solid white;
-            border-bottom: 9px solid transparent;
+            line-height: 1.5;
+            overflow-y: auto;
         }
 
-        /* 下側：過去のログが流れるタイムラインコンテナ */
-        .chat-container { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 12px; border: 1px solid #ddd; }
-        
-        /* 過去ログボックスの高さ調整 */
-        .chat-box { height: calc(100vh - 290px); min-height: 200px; max-height: 320px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; border-radius: 12px; }
-        
-        .message { margin: 6px 0; padding: 10px 14px; border-radius: 16px; max-width: 85%; display: block; clear: both; word-wrap: break-word; line-height: 1.4; font-size: 0.9rem; }
-        .user-msg { background: #007aff; color: white; float: right; text-align: left; border-bottom-right-radius: 4px; }
-        .ai-msg { background: #e9e9eb; color: #1c1c1e; float: left; border-top-left-radius: 4px; margin-left: 5px; }
-        .system-msg { background: #fff9c4; color: #f57f17; font-size: 0.8em; text-align: center; max-width: 100%; border-radius: 8px; padding: 6px; margin: 5px 0; }
-        
-        /* 入力エリア */
-        .input-area { display: flex; gap: 6px; }
-        input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 12px; font-size: 1rem; background: #f8f9fa; outline: none; }
+        /* 下側の入力エリア */
+        .input-area { display: flex; gap: 8px; width: 100%; }
+        input { flex: 1; padding: 16px; border: 2px solid #ccc; border-radius: 16px; font-size: 1rem; background: #f8f9fa; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         input:focus { border-color: #007aff; background: white; }
-        button { padding: 0 20px; background: #007aff; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        button { padding: 0 24px; background: #007aff; color: white; border: none; border-radius: 16px; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,122,255,0.2); }
         button:active { background: #0056b3; }
         button:disabled { background: #ccc; }
 
-        /* デバッグ用コード表示エリア */
         #codeViewer {
             display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
             background: #1e1e1e; color: #39ff14; font-family: monospace; padding: 15px;
@@ -94,11 +74,6 @@
             z-index: 10000; overflow: auto; white-space: pre-wrap; font-size: 0.8rem;
         }
         .close-btn { position: sticky; top: 0; float: right; background: #ff5f56; color: white; border: none; padding: 6px 12px; cursor: pointer; font-weight: bold; border-radius: 5px; }
-
-        /* オープニング用の黒画面スタイル */
-        #openingScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease; }
-        .logo-text { color: #ffffff; font-size: 2.5rem; font-weight: bold; letter-spacing: 5px; font-family: 'Courier New', Courier, monospace; opacity: 0; animation: fadeInOut 2.2s forwards; }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.95); filter: blur(5px); } 30% { opacity: 1; transform: scale(1.0); filter: blur(0px); } 85% { opacity: 1; } 100% { opacity: 0; } }
     </style>
     <script type="module">
         import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
@@ -106,10 +81,6 @@
     </script>
 </head>
 <body>
-
-<div id="openingScreen">
-    <div class="logo-text">Reko-tafu</div>
-</div>
 
 <div id="codeViewer">
     <button class="close-btn" onclick="document.getElementById('codeViewer').style.display='none'">× 閉じる</button>
@@ -119,27 +90,21 @@
 <div class="app-wrapper" id="appWrapper">
     
     <div class="game-stage">
-        <div class="mascot-left">
-            <img class="mascot-img" id="mascotImg" src="+9.jpg" alt="カワウソ">
+        <div class="mascot-area">
+            <img class="mascot-img" id="mascotImg" src="-1.jpg" alt="カワウソ">
         </div>
-        <div class="current-bubble-area" id="liveBubble">
-            （...ロード中だわ。ちょっと待っててな！）
-        </div>
+        <div class="current-bubble-area" id="liveBubble">タフの全回路の同期＆軽量LLMモデル（脳みそ）をロード中だわ。最初のダウンロードは1〜2分かかるから、コンソール（F12）を見ながらちょっと待ってな。</div>
     </div>
 
-    <div class="chat-container">
-        <div class="chat-box" id="chatBox">
-            <div class="message system-msg" id="statusMsg">システム: mタフの完全記憶システムを同期しています。初回は少し待っててね...</div>
-        </div>
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="メッセージを入力..." disabled>
-            <button id="sendBtn" onclick="sendMessage()" disabled>送信</button>
-        </div>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="メッセージを入力..." disabled>
+        <button id="sendBtn" onclick="sendMessage()" disabled>送信</button>
     </div>
 </div>
 
 <script>
     let extractor;
+    let generator; // 🌟新設：ブラウザ内文字生成AI用の変数
     let chatTurns = 0;
     
     let currentStoryContext = ""; 
@@ -149,16 +114,26 @@
 
     let rallyCount = 0; 
     let rallyTopic = "";
+    let mtafuMood = 50; 
 
     // デフォルトのベース記憶
     const defaultTopicPool = {
         "こんにちは": ["こんにちは！色々話そうや", "よぉ、お疲れ。調子はどうだ？"],
         "バイバイ": ["おう、またな。気をつけて", "じゃあね。またいつでも話しかけてよ"],
-        "ゲーム": ["最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味あるんだよね。", "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うわ。"],
-        "生物・遺伝": ["生き物の体って不思議だよな。染色体の異常とか、遺伝子の突然変異圧とかで進化の方向が変わるの、マジでロマンあるわ。", "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよな。"],
-        "古生物・化石": ["大昔の絶滅イベント（P/T境界とかK/Pg境界）の話、ゾクゾクしない？アンモナイトの殻の『付加成長』のギザギザ模様（縫合線）とか、あれ進化の歴史が刻まれてて最高にカッコいいんだよ。", "プロレカニティダス目の絶滅を生き延びた戦略とか、古生物の進化ってデータサイエンス的に見てもめちゃくちゃ面白い。"],
-        "データサイエンス": ["データ分析とか統計（ANOVAやTukeyの多重比較とか）って、一見地味だけど、研究の仮説をガチッと証明するための最強の武器だよな。Pythonで視覚化するの楽しいし。"],
-        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入狙えるようなガチのプロフェッショナルを目指すのって、男としてシブいよな。"]
+        "ゲーム": [
+            "最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味あるんだよね。[WORD]の話ももっと聞きたいわ。", 
+            "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うわ。[WORD]とかもその辺のロジックが効いてくるよな。"
+        ],
+        "生物・遺伝": [
+            "生き物の体って不思議だよな。染色体の異常とか、遺伝子の突然変異圧とかで進化の方向が変わるの、マジでロマンあるわ。[WORD]の仕組みとかも奥が深そうだしさ。", 
+            "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよな。[WORD]に関する遺伝の規則性も気になるわ。"
+        ],
+        "古生物・化石": [
+            "大昔の絶滅イベント（P/T境界とかK/Pg境界）の話、ゾクゾクしない？アンモナイトの殻の『付加成長』のギザギザ模様（縫合線）とか、あれ進化の歴史が刻まれてて最高にカッコいいんだよ。お前が言った[WORD]も、まさにその歴史の一部じゃん？", 
+            "プロレカニティダス目の絶滅を生き延びた戦略とか、古生物の進化ってデータサイエンス的に見てもめちゃくちゃ面白い。[WORD]のデータとか残ってたら最高なんだけどな。"
+        ],
+        "データサイエンス": ["データ分析とか統計（ANOVAやTukeyの多重比較とか）って、一見地味だけど、研究の仮説をガチッと証明するための最強の武器だよな。Pythonで[WORD]のデータを視覚化するの楽しいし。"],
+        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入狙えるようなガチのプロフェッショナルを目指すのって、男としてシブいよな。[WORD]の分野でもそういうプロフェッショナルが求められてるし。"]
     };
 
     const defaultSemanticWeb = {
@@ -178,12 +153,25 @@
         "デフォルト": ["これについて、どう思う？もっと詳しく聞かせてよ！", "タフはこれめっちゃ面白い概念段階だと思うんだけど、意見を聞いてみたいな。"]
     };
 
+    const synthesisParts = {
+        "joins": ["というかさ、", "ぶっちゃけさ、", "それはそうと、", "あ、そういえば、", "ちょっと話変わるけど、"],
+        "endings_normal": ["ってタフは思うわけよ！", "って感じだな、間違いない。", "のさ（（笑））", "なんだよね〜。"],
+        "endings_question": ["って思うんだけど、どうだい？", "についてどう捉えてる？", "の意見が聞きたいな！"],
+        "sullen_replies": [
+            "……別に。今ちょっとそういう話する気分じゃないわ（（笑））",
+            "あー、その話ね。今はなんか頭回らないからまた今度にしてよ。",
+            "ふーん、そっか。……というかさ、お前さっきからちょっとトゲなくない？（笑）",
+            "うーん、なんか今のそのノリ付き合いきれないわ、すまん（（笑））"
+        ],
+        "excited_joins": ["マジでさ！", "うおおお、聞いてくれよ！", "これ最高なんだけどさ！"]
+    };
+
     const aizuchiMatrix = {
         "ショート": ["あ〜、その話か！", "お、〇〇ね。", "なるほどね、分かるわ。"],
         "エキサイト": ["マジで！？それ最高じゃん！", "お、テンション高いな！最高！", "うおおお、それマジで熱いテーマだわ！"],
         "スマイル": ["あはは、それウケるわ（（笑））", "たしかに（笑）それ面白いわ。"],
         "通常": ["ほほう、なるほどな！", "なるほどね、そのあたり興味あるんだな。", "良いね、タフもその話題大好きだわ。"],
-        "questions": ["お、タフの意見が聞きたい感じ？タフ的にはさ、", "その質問待ってました（笑）タフの持論を語らせてもらうと、", "うお、そこに目を付けるの鋭いね！タフの意見としてはさ, ", "質問のセンスがいいね〜。これに関してはね、"]
+        "questions": ["お、タフの意見が聞きたい感じ？タフ的にはさ、", "その質問待ってました（（笑））タフの持論を語らせてもらうと、", "うお、そこに目を付けるの鋭いね！タフの意見としてはさ, ", "質問のセンスがいいね〜。これに関してはね、"]
     };
 
     const questionKeywords = [
@@ -204,7 +192,7 @@
 
     const rally2Aizuchi = [
         "お〜、なるほどな！『[TEXT]』ってことか、それは深いわ！",
-        "あはは、マジで！『[TEXT]』なのは予想外で面白い（笑）",
+        "あはは、マジで！『[TEXT]』なのは予想外で面白い（（笑））",
         "ほうほう、納得だわ。お前が『[TEXT]』って言うなら間違いないね。",
         "お、いいじゃんいいじゃん！『[TEXT]』っていうの、最高に熱いな。"
     ];
@@ -212,17 +200,17 @@
         "ちなみに、それってこれから先、もっとこうしていきたい！みたいな野望とか予定はあるの？",
         "それやってるとき（調べてるとき）に、一番大変だったり苦労するポイントってどこ？",
         "タフにそれをもっと好きにさせるための、一番のオススメ殺し文句を教えてよ！",
-        "他には何か、ここだけの秘密のエピソードとか隠された裏話はないの？（笑）"
+        "他には何か、ここだけの秘密のエピソードとか隠された裏話はないの？（（笑））"
     ];
 
     const chitchatPool = [
-        "あはは、それまたマニアックなところ攻めてくるな〜（笑）",
+        "あはは、それまたマニアックなところ攻めてくるな〜（（笑））",
         "うーん、そこはタフの脳みそがまだ追いついてないわ（笑）ちょっと悔しいな。",
         "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃないぜ。",
-        "なるほどね〜。そういう話もたまには悪くないじゃん（笑）",
+        "なるほどね〜。そういう話もたまには悪くないじゃん（（笑））",
         "ほほう、お前最近そういうこと考えてるんだ？なんかおもしろいね。",
         "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わるわ（笑）",
-        "ぶははは！お前それマジで言ってる？（笑）相変わらずぶっ飛んでて最高だわ。"
+        "ぶははは！お前それマジで言ってる？（（笑））相変わらずぶっ飛んでて最高だわ。"
     ];
 
     const learningTriggers = ["教えて", "おしえて", "覚え", "覚える", "おぼえ", "意味は", "意味を", "言葉だよ", "単語だよ"];
@@ -231,7 +219,7 @@
         "morning": ["お、早起きじゃん！今日も最高にいい日にしようぜ。", "よぉ、朝からお疲れ！眠気はバッチリ覚めたかい？"],
         "noon": ["お疲れ！昼飯はもう食ったか？午後もボチボチいこうや。", "よぉ、ちょうど昼どきだな。ひと息つきながら話そうぜ。"],
         "evening": ["今日もお疲れさん！夜はゆっくり趣味の話でもしようぜ。", "よぉ、お疲れ。今日の調子はどうだったよ？"],
-        "midnight": ["おいおい、こんな夜更かしして何してんだ？（笑）付き合うけどさ。", "よぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（（笑））"]
+        "midnight": ["おいおい、こんな夜更かしして何してんだ？（（笑））付き合うけどさ。", "よぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（笑）"]
     };
 
     let topicPool = JSON.parse(localStorage.getItem("mtafu_topicPool")) || defaultTopicPool;
@@ -275,38 +263,47 @@
         document.getElementById("liveBubble").innerText = text;
     }
 
-    // 🌟【大改造】お前の手元にある画像名「+1」〜「+9」、「-1」〜「-7」と100%完全連動！
     function changeMascotEmotion(type) {
         const mascot = document.getElementById("mascotImg");
         mascot.style.transform = "scale(0.95) translateY(3px)";
         
         setTimeout(() => {
             if (type === "positive") {
-                const randNum = Math.floor(Math.random() * 9) + 1; // 💡 1〜9の数字
-                mascot.src = `+${randNum}.jpg`; // ➡ 例: +5.jpg や +9.jpg
+                const randNum = Math.floor(Math.random() * 9) + 1; 
+                mascot.src = `+${randNum}.jpg`; 
             } else {
-                const randNum = Math.floor(Math.random() * 7) + 1; // 💡 1〜7の数字
-                mascot.src = `-${randNum}.jpg`; // ➡ 例: -3.jpg
+                const randNum = Math.floor(Math.random() * 7) + 1; 
+                mascot.src = `-${randNum}.jpg`; 
             }
             mascot.style.transform = "scale(1.0) translateY(0px)";
         }, 100);
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        setTimeout(() => {
-            const opScreen = document.getElementById("openingScreen");
-            if (opScreen) {
-                opScreen.style.opacity = "0"; 
-                setTimeout(() => {
-                    opScreen.remove(); 
-                    document.body.style.overflow = "auto"; 
-                    document.getElementById("appWrapper").style.display = "block";
-                }, 800);
-            }
-        }, 2500);
-
+    // 外部ネット検索関数
+    async function searchWebKnowledge(query) {
         try {
+            const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.AbstractText) return data.AbstractText;
+            else if (data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) return data.RelatedTopics[0].Text;
+            return null;
+        } catch (e) {
+            console.error("検索通信エラー:", e);
+            return null;
+        }
+    }
+
+    // 🌟【大改造】起動時の処理。埋め込み用モデルと、文字生成用の超軽量モデル（LLM）の2つを同時にロード
+    window.addEventListener('DOMContentLoaded', async () => {
+        document.getElementById("appWrapper").style.display = "flex";
+        try {
+            // 1. 類似度計算用の脳をロード
             extractor = await window.pipeline('feature-extraction', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2');
+            
+            // 2. 🌟その場で思考・解釈してフリートークを紡ぐためのテキスト生成AI（LLM）をロード！
+            // 約900MBの軽量モデルです。初回のみブラウザのDLロードが走ります。
+            generator = await window.pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat');
             
             keywords = Object.keys(topicPool);
             keywordEmbeddings = [];
@@ -317,17 +314,13 @@
             
             if (userName) {
                 const timeGreeting = getTimeBasedGreeting();
-                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そうぜ！`);
-                document.getElementById("statusMsg").innerText = `システム: カセットの同期完了。`;
-                document.getElementById("userInput").placeholder = "メッセージを入力...";
-                currentStoryContext = `${userName}が再びアプリを開いて会話を再開した。`;
+                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そうぜ！\n（現在の脳みそ：完全ローカルLLM生成同期完了）`);
             } else {
                 setLiveMascotSpeech("よぉ！起動したよ。まずはそっちの名前を教えておくれ！");
-                document.getElementById("statusMsg").innerText = "システム: 初回セットアップ";
-                document.getElementById("userInput").placeholder = "名前を入力してね...";
             }
             document.getElementById("userInput").disabled = false;
             document.getElementById("sendBtn").disabled = false;
+            document.getElementById("userInput").placeholder = "メッセージを入力...";
         } catch (e) {
             setLiveMascotSpeech("あちゃー、脳みそのロードに失敗しちまったわ。リロードしてみて。");
             console.error(e);
@@ -356,7 +349,6 @@
         if (!userText) return;
 
         inputEl.value = "";
-        addMessage(`${userName || 'あなた'}: ${userText}`, "user-msg");
         chatTurns++;
 
         if (userText === "Reko-tafu") {
@@ -371,12 +363,8 @@
 
         if (userText === "0414") {
             changeMascotEmotion("positive");
-            setLiveMascotSpeech("（...！特別なコマンドを検知したよ）");
-            setTimeout(() => {
-                const secretText = "Reko「まい誕生日おめでとう。大好きだよ。たくさん旅行して、いっぱい遊ぼうね。都井岬とか、郡上祭りとか！テニス，スノボも行きたい！あと海外も行こうね！台湾のタピオカと、お肉とか！焼肉もいこー！笑いつもありがとう、一緒にいて楽しくて幸せ！でもでも、体調には気を付けてね笑～れいより」";
-                setLiveMascotSpeech(secretText);
-                addMessage(secretText, "ai-msg");
-            }, 800);
+            const secretText = "Reko「まい誕生日おめでとう。大好きだよ。たくさん旅行して、いっぱい遊ぼうね。都井岬とか、郡上祭りとか！テニス，スノボも行きたい！あと海外も行こうね！台湾のタピオカと、お肉とか！焼肉もいこー！笑いつもありがとう、一緒にいて楽しくて幸せ！でもでも、体調には気を付けてね笑～れいより」";
+            setLiveMascotSpeech(secretText);
             return;
         }
 
@@ -392,75 +380,75 @@
             let welcome = `よろしくな、${userName}。色々話しながら、タフの知らないことも教えてよ`;
             changeMascotEmotion("positive");
             setLiveMascotSpeech(welcome);
-            addMessage(`mタフ: ${welcome}`, "ai-msg");
             currentStoryContext = `最初に${userName}が挨拶して会話が始まった。`;
             saveMemoryToDevice();
             return;
         }
 
+        // Moodシステム
+        let isTsukommi = TsukommiPool.some(t => userText.includes(t));
+        let isShortReply = userText.length <= 3 && !userText.includes("！") && !userText.includes("!");
+        
+        if (isTsukommi) mtafuMood -= 15;
+        else if (isShortReply) mtafuMood -= 5;
+        else if (userText.includes("！") || userText.includes("!") || userText.includes("笑") || userText.includes("草") || userText.includes("w")) mtafuMood += 8;
+        mtafuMood = Math.max(0, Math.min(100, mtafuMood));
+
         setLiveMascotSpeech("（ちょっと考えてるわ...）");
 
-        // 【文脈ロックラリー中】
         if (rallyCount > 0) {
             setTimeout(() => {
                 rallyCount--; 
-                
-                if (userText.includes("！") || userText.includes("!") || userText.includes("笑") || userText.includes("草") || userText.includes("w")) {
-                    changeMascotEmotion("positive");
-                } else {
-                    changeMascotEmotion("positive");
-                }
-
+                changeMascotEmotion("positive");
                 if (rallyCount === 1) {
                     let rAizuchi = rally2Aizuchi[Math.floor(Math.random() * rally2Aizuchi.length)].replace("[TEXT]", userText);
                     let rQuestion = rally2Questions[Math.floor(Math.random() * rally2Questions.length)];
-                    let fullText = `${rAizuchi}\n\nそういえばさ、${rQuestion}、${userName}？`;
-                    setLiveMascotSpeech(fullText);
-                    addMessage(`mタフ: ${fullText}`, "ai-msg");
+                    setLiveMascotSpeech(`${rAizuchi}\n\nそういえばさ、${rQuestion}、${userName}？`);
                 } else if (rallyCount === 0) {
-                    let endText = `あはは、なるほどね！『${rallyTopic}』について色々話してくれてマジで面白かったわ！${userName}、教えてくれて本当にサンキューな。おかげでタフの脳みそがまた一歩、人間に近づいた気がするよ（笑）`;
-                    setLiveMascotSpeech(endText);
-                    addMessage(`mタフ: ${endText}`, "ai-msg");
+                    setLiveMascotSpeech(`あはは、なるほどね！『${rallyTopic}』について色々話してくれてマジで面白かったわ！${userName}、教えてくれて本当にサンキューな。`);
                     rallyTopic = ""; 
                 }
             }, 600);
             return;
         }
 
-        // 連想型対話学習モード
         if (isLearning) {
             const newReply = userText;
             topicPool[unknownWord] = [newReply];
-            semanticWeb[unknownWord] = newReply.split(/[\s、。！？」]+/).filter(w => w.length > 1);
+            let extractedWords = newReply.split(/[\s、。！？」]+/).filter(w => w.length > 1);
+            semanticWeb[unknownWord] = extractedWords;
             
-            followUpPool[unknownWord] = [
-                `この『${unknownWord}』のこと、タフにもっと詳しく教えてよ、${userName}！`,
-                `なるほどな〜。${userName}が教えてくれたこの『${unknownWord}』の概念、めちゃくちゃ興味深いわ。`
-            ];
+            const coreGenres = ["ゲーム", "生物・遺伝", "古生物・化石", "データサイエンス"];
+            let maxGenreSim = -1.0; let bestGenre = "";
+            const replyEmbedding = await getEmbedding(newReply);
+            for (let genre of coreGenres) {
+                let genreIdx = keywords.indexOf(genre);
+                if (genreIdx !== -1) {
+                    let sim = cosineSimilarity(replyEmbedding, keywordEmbeddings[genreIdx]);
+                    if (sim > maxGenreSim) { maxGenreSim = sim; bestGenre = genre; }
+                }
+            }
+            let dynamicComment = "";
+            if (maxGenreSim >= 0.40 && bestGenre) {
+                if (!semanticWeb[bestGenre].includes(unknownWord)) semanticWeb[bestGenre].push(unknownWord);
+                dynamicComment = `\n\n（タフの脳内：ふむふむ、これって『${bestGenre}』のジャンルに近い概念だな…！）`;
+                mtafuMood += 10;
+            }
             
+            followUpPool[unknownWord] = [`この『${unknownWord}』のこと、タフにもっと詳しく教えてよ、${userName}！`];
             keywords = Object.keys(topicPool);
             const newEmb = await getEmbedding(unknownWord);
             keywordEmbeddings.push(newEmb);
             
-            rallyCount = 2; 
-            rallyTopic = unknownWord;
+            rallyCount = 2; rallyTopic = unknownWord;
             let dynamicQuestion = generateDynamicQuestion(unknownWord);
             
             setTimeout(() => {
                 changeMascotEmotion("positive");
-                let learnText = `なるほどね、覚えたわ！これからは『${unknownWord}』って言われたら『${newReply}』って返すよ。ありがとな！\n\n${dynamicQuestion}、${userName}？`;
-                setLiveMascotSpeech(learnText);
-                addMessage(`mタフ: ${learnText}`, "ai-msg");
-                
-                currentStoryContext = `新しい言葉「${unknownWord}」を学習し、100バリエーション深掘りラリーを開始した。`;
+                setLiveMascotSpeech(`なるほどね、覚えたわ！これからは『${unknownWord}』って言われたら『${newReply}』って返すよ。ありがとな！${dynamicComment}\n\n${dynamicQuestion}、${userName}？`);
                 isLearning = false; unknownWord = "";
                 saveMemoryToDevice();
             }, 600);
-            return;
-        }
-
-        if (userText === "終了") {
-            setLiveMascotSpeech(`お疲れ。色々話せて楽しかったわ、またね、${userName}`);
             return;
         }
 
@@ -468,30 +456,16 @@
             if (userText.includes(kw) && !attentionKeywords.includes(kw)) {
                 attentionKeywords.push(kw);
                 if (attentionKeywords.length > 3) attentionKeywords.shift(); 
+                mtafuMood += 3;
             }
         }
 
-        let isTsukommi = TsukommiPool.some(t => userText.includes(t));
         if (isTsukommi && lastAiKeyword) {
             changeMascotEmotion("negative"); 
             topicHistoryStack = topicHistoryStack.filter(t => t !== lastAiKeyword);
-            let previousTopic = topicHistoryStack[topicHistoryStack.length - 1];
-            if (previousTopic) {
-                let text1 = `あ、悪りぃ！『${lastAiKeyword}』の話は的外れだったか（笑）`;
-                setLiveMascotSpeech(text1);
-                addMessage(`mタフ: ${text1}`, "ai-msg");
-                setTimeout(() => {
-                    let text2 = `じゃあさ、さっき話してた『${previousTopic}』の続きに戻ろうぜ、${userName}。そっちの方が${userName}に合ってるわ`;
-                    setLiveMascotSpeech(text2);
-                    addMessage(`mタフ: ${text2}`, "ai-msg");
-                }, 1000);
-                lastAiKeyword = previousTopic;
-            } else {
-                let text1 = `あ、すまんすまん！『${lastAiKeyword}』の話はループだったな（笑）\n\n仕切り直そうぜ、${userName}。他に今、何について考えてるか教えてよ`;
-                setLiveMascotSpeech(text1);
-                addMessage(`mタフ: ${text1}`, "ai-msg");
-                lastAiKeyword = "";
-            }
+            setTimeout(() => {
+                setLiveMascotSpeech(mtafuMood < 30 ? `チッ、うるせーな（（笑））『${lastAiKeyword}』の話が違うならもういいよ。` : `あ、悪りぃ！『${lastAiKeyword}』の話は的外れだったか（笑）仕切り直そうぜ。`);
+            }, 400);
             return;
         }
         
@@ -504,116 +478,113 @@
                 }
             }
         }
-        
-        let exactKeywordMatch = keywords.find(k => userText === k || userText.includes(k));
-        if (!exactKeywordMatch) {
-            for (let kw of keywords) {
-                if (semanticWeb[kw]) {
-                    let hasAssociatedWord = semanticWeb[kw].some(aw => userText.includes(aw));
-                    if (hasAssociatedWord) { exactKeywordMatch = kw; break; }
-                }
-            }
-        }
 
-        let blendedContext = exactKeywordMatch ? exactKeywordMatch : `[これまでの流れ: ${currentStoryContext}] [注目単語: ${attentionKeywords.join(", ")}] 現在の入力: ${userText}`;
+        if (!window.userChatHistoryStack) window.userChatHistoryStack = [];
+        window.userChatHistoryStack.push(userText);
+        if (window.userChatHistoryStack.length > 3) window.userChatHistoryStack.shift(); 
+
+        let pastContextKeywords = attentionKeywords.join("、");
+        let blendedContext = `[直前のトピック: ${pastContextKeywords}] [これまでの流れ: ${window.userChatHistoryStack.slice(0, -1).join(" → ")}] [現在の入力: ${userText}]`;
+
         const contextEmbedding = await getEmbedding(blendedContext);
 
         let maxSim = -1.0; let bestMatchIdx = 0;
         for (let i = 0; i < keywordEmbeddings.length; i++) {
             const kw = keywords[i];
             let sim = cosineSimilarity(contextEmbedding, keywordEmbeddings[i]);
+            if (window.userChatHistoryStack.some(h => h.includes(kw))) sim += 0.1;
             sim += semanticBoosts[kw];
             if (sim > maxSim) { maxSim = sim; bestMatchIdx = i; }
         }
 
-        // ⭕ 引き出しにヒットした場合
+        // ⭕ 引き出しにヒットした場合（これまでの爆速合成エンジンで返す）
         if (maxSim >= 0.70) { 
-            changeMascotEmotion("positive"); 
+            changeMascotEmotion(mtafuMood >= 40 ? "positive" : "negative"); 
             const matchedKeyword = keywords[bestMatchIdx];
             const replies = topicPool[matchedKeyword];
-            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            let baseReply = replies[Math.floor(Math.random() * replies.length)];
             
             if (topicHistoryStack[topicHistoryStack.length - 1] !== matchedKeyword) {
                 topicHistoryStack.push(matchedKeyword);
                 if (topicHistoryStack.length > 5) topicHistoryStack.shift();
             }
             
-            let followUps = followUpPool[matchedKeyword] || followUpPool["デフォルト"];
-            let randomFollowUp = followUps[Math.floor(Math.random() * followUps.length)];
-            
             lastAiKeyword = matchedKeyword;
-            currentStoryContext = `直前まで${matchedKeyword}の話（${randomReply.slice(0, 15)}...）をしていた。`;
-
             let isQuestion = questionKeywords.some(qk => userText.includes(qk));
-            let chosenAizuchi = "";
-            
-            if (isQuestion) {
-                chosenAizuchi = aizuchiMatrix["questions"][Math.floor(Math.random() * aizuchiMatrix["questions"].length)];
-            } else if (userText.includes("！") || userText.includes("!")) {
-                chosenAizuchi = aizuchiMatrix["エキサイト"][Math.floor(Math.random() * aizuchiMatrix["エキサイト"].length)];
-            } else if (userText.includes("笑") || userText.includes("草") || userText.includes("w")) {
-                chosenAizuchi = aizuchiMatrix["スマイル"][Math.floor(Math.random() * aizuchiMatrix["スマイル"].length)];
-            } else if (userText.length <= 5) {
-                chosenAizuchi = aizuchiMatrix["ショート"][Math.floor(Math.random() * aizuchiMatrix["ショート"].length)];
-            } else {
-                chosenAizuchi = aizuchiMatrix["通常"][Math.floor(Math.random() * aizuchiMatrix["通常"].length)];
-            }
+            let chosenAizuchi = isQuestion ? aizuchiMatrix["questions"][Math.floor(Math.random() * aizuchiMatrix["questions"].length)] : aizuchiMatrix["通常"][Math.floor(Math.random() * aizuchiMatrix["通常"].length)];
 
             setTimeout(() => {
                 const nameSuffix = Math.random() > 0.5 ? `、${userName}` : "";
                 let parsedAizuchi = chosenAizuchi.replace("レイ", userName);
-                let finalReply = `${parsedAizuchi}\n${randomReply}${nameSuffix} \n\n${randomFollowUp}`;
+                let rawWord = userText.replace(/[(って|について|の|は|が|を|も|教えて|どう思う|？|\?)]/g, "").trim();
+                if (!rawWord || rawWord.length <= 1) rawWord = matchedKeyword;
                 
+                let simulatedReply = baseReply.replace(/\[WORD\]/g, rawWord);
+                let randomJoin = synthesisParts[mtafuMood >= 75 ? "excited_joins" : "joins"][Math.floor(Math.random() * synthesisParts["joins"].length)];
+                
+                let finalReply = "";
+                if (mtafuMood < 30) {
+                    finalReply = `（機嫌：${mtafuMood} / 不機嫌）\n\n${synthesisParts["sullen_replies"][Math.floor(Math.random() * synthesisParts["sullen_replies"].length)]}`;
+                } else {
+                    if (isQuestion) {
+                        let randomEnding = synthesisParts["endings_normal"][Math.floor(Math.random() * synthesisParts["endings_normal"].length)];
+                        finalReply = `（機嫌：${mtafuMood}）\n\n${parsedAizuchi}\n${simulatedReply}${nameSuffix}\n\n${randomJoin}${rawWord}${randomEnding}`;
+                    } else {
+                        let randomEnding = synthesisParts["endings_question"][Math.floor(Math.random() * synthesisParts["endings_question"].length)];
+                        let randomFollowUp = defaultFollowUpPool["デフォルト"][0];
+                        finalReply = `（機嫌：${mtafuMood}）\n\n${parsedAizuchi}\n${simulatedReply}${nameSuffix}\n\n${randomJoin}${rawWord}${randomEnding}\n${randomFollowUp}`;
+                    }
+                }
                 setLiveMascotSpeech(finalReply);
-                addMessage(`mタフ: ${finalReply}`, "ai-msg");
             }, 400);
         } 
-        // ❌ 引き出しにかすりもしなかった場合
+        // 🌟【新機軸】引き出しにない場合：ネット検索 ＋ 完全ローカル生成AIによる「解釈生成」ルート発動！
         else {
-            let wantToTeach = learningTriggers.some(trigger => userText.includes(trigger));
-            if (wantToTeach) {
-                changeMascotEmotion("negative"); 
-                let cleanWord = userText.replace(/[(教えて|おしえて|覚え|おぼえ|意味は|意味を)]/g, "");
-                let teachText = `お、新しい言葉を教えてくれるんか？『${cleanWord}』ってどういう意味？なんて返せばいいか教えてよ、${userName}`;
-                setLiveMascotSpeech(teachText);
-                addMessage(`mタフ: ${teachText}`, "ai-msg");
-                isLearning = true; unknownWord = cleanWord;
-            } else {
-                changeMascotEmotion("negative"); 
-                let randomChitchat = chitchatPool[Math.floor(Math.random() * chitchatPool.length)];
-                let randomDefaultFollow = defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)];
-                let fullText = `${randomChitchat}\n\n${randomDefaultFollow}`;
+            let searchQuery = userText.replace(/[(教えて|おしえて|意味は|意味を|について|って|何|？|\?)]/g, "").trim();
+            if (searchQuery.length > 1) {
+                const webSnippet = await searchWebKnowledge(searchQuery);
                 
-                setTimeout(() => {
-                    setLiveMascotSpeech(fullText);
-                    addMessage(`mタフ: ${fullText}`, "ai-msg");
-                }, 400);
-            }
-        }
-
-        if (chatTurns % 3 === 0 && topicHistoryStack.length > 1 && rallyCount === 0) {
-            setTimeout(() => {
-                let pastTopics = topicHistoryStack.filter(t => t !== lastAiKeyword);
-                if (pastTopics.length > 0) {
+                if (webSnippet) {
                     changeMascotEmotion("positive");
-                    let forgottenTopic = pastTopics[pastTopics.length - 1];
-                    let backText = `そういえばさ、${userName}。さっき話してた『${forgottenTopic}』のことなんだけどさ、タフ、まだちょっと話し足りないんだよね。あの話、もうちょっと深掘りしてみない？`;
-                    setLiveMascotSpeech(backText);
-                    addMessage(`mタフ: ${backText}`, "ai-msg");
-                    lastAiKeyword = forgottenTopic;
-                }
-            }, 2200);
-        }
-    }
+                    setLiveMascotSpeech("（裏でネットを検索したわ。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待ってな...）");
 
-    function addMessage(text, className) {
-        const chatBox = document.getElementById("chatBox");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${className}`;
-        msgDiv.innerText = text;
-        chatBox.appendChild(msgDiv); chatBox.scrollTop = chatBox.scrollHeight;
+                    // 🧠ブラウザの中のAIに「タフになりきって、この検索結果を解釈しろ」と命令文を作る（Chatプロンプト）
+                    const prompt = `<|im_start|>system
+お前は少し生意気でフランクなカワウソのキャラクター「タフ」だ。
+敬語は絶対に使うな。「〜だわ」「〜じゃん？」「（笑）」などの男らしいフランクな口調で喋れ。
+次の【ネットの情報】を読んで、その内容を1文だけでレイに分かりやすく解釈・説明してあげて。<|im_end|>
+<|im_start|>user
+【ネットの情報】:${webSnippet}<|im_end|>
+<|im_start|>assistant\n`;
+
+                    try {
+                        // 🌟ローカルの生成AIをここで実際にフル稼働させて、文字を作らせる！
+                        const output = await generator(prompt, {
+                            max_new_tokens: 70,
+                            temperature: 0.6,
+                            do_sample: true
+                        });
+
+                        // 生成された完全オリジナルの解釈文をパース
+                        let rawGeneratedText = output[0].generated_text;
+                        let generatedReply = rawGeneratedText.split('<|im_start|>assistant\n').pop().replace(/<\|im_end\|>/g, "").trim();
+
+                        let webReply = `（機嫌：${mtafuMood} / 🌐ローカルLLM思考解釈モード）\n\nおっと、その話はタフの脳内に知恵がなかったから、今ネットで調べてタフなりに解釈してみたわ！\n\n${generatedReply}\n\nぶっちゃけネットのデータにはそう書いてあったけど、お前はどう思うよ？`;
+                        setLiveMascotSpeech(webReply);
+                        return;
+                    } catch (genError) {
+                        console.error("文字生成エラー:", genError);
+                        setLiveMascotSpeech("あちゃー、頭の中で文字を組み立てる計算がパンクしちまったわ（笑）");
+                        return;
+                    }
+                }
+            }
+
+            // 検索・生成ともに動かなかった場合のセーフティ
+            changeMascotEmotion("negative"); 
+            let fullText = mtafuMood < 30 ? `（機嫌：${mtafuMood}）\n\nなんか今つまらんわ。もっとおもろい話してや（（笑））` : `（機嫌：${mtafuMood}）\n\n${chitchatPool[Math.floor(Math.random() * chitchatPool.length)]}\n\n${defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)]}`;
+            setLiveMascotSpeech(fullText);
+        }
     }
 </script>
-
-</body>
-</html>
+</body></html>
