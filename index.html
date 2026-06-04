@@ -93,7 +93,7 @@
         <div class="mascot-area">
             <img class="mascot-img" id="mascotImg" src="-1.jpg" alt="カワウソ">
         </div>
-        <div class="current-bubble-area" id="liveBubble">タフの全回路の同期＆軽量LLMモデル（脳みそ）をロード中だわ。最初のダウンロードは1〜2分かかるから、コンソール（F12）を見ながらちょっと待ってな。</div>
+        <div class="current-bubble-area" id="liveBubble">タフのの会話モデルをロード中です。最初のダウンロードは1〜2分かかるから、コンソール（F12）を見ながらちょっと待ってて。</div>
     </div>
 
     <div class="input-area">
@@ -118,22 +118,22 @@
 
     // デフォルトのベース記憶
     const defaultTopicPool = {
-        "こんにちは": ["こんにちは！色々話そうや", "よぉ、お疲れ。調子はどうだ？"],
-        "バイバイ": ["おう、またな。気をつけて", "じゃあね。またいつでも話しかけてよ"],
+        "こんにちは": ["こんにちは！色々話そう", "よぉ、お疲れ。調子はどうだ"],
+        "バイバイ": ["おう、またね。気をつけて", "じゃあね。またいつでも話しかけてよ"],
         "ゲーム": [
-            "最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味あるんだよね。[WORD]の話ももっと聞きたいわ。", 
-            "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うわ。[WORD]とかもその辺のロジックが効いてくるよな。"
+            "最近おもしろいゲームあった？タフはUnityとかの3Dゲームの仕組みに興味あるんだよね。[WORD]の話ももっと聞きたい。", 
+            "ゲームってさ、グラフィックも大事だけど、操作性とかロジックの気持ちよさが命だと思うわ。[WORD]とかもその辺のロジックが効いてくるよね。"
         ],
         "生物・遺伝": [
             "生き物の体って不思議だよな。染色体の異常とか、遺伝子の突然変異圧とかで進化の方向が変わるの、マジでロマンあるわ。[WORD]の仕組みとかも奥が深そうだしさ。", 
-            "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよな。[WORD]に関する遺伝の規則性も気になるわ。"
+            "silkworm（カイコ）の遺伝子研究とか、あれだけ人間に家畜化された生物の謎って深すぎるよな。[WORD]に関する遺伝の規則性も気になる。"
         ],
         "古生物・化石": [
             "大昔の絶滅イベント（P/T境界とかK/Pg境界）の話、ゾクゾクしない？アンモナイトの殻の『付加成長』のギザギザ模様（縫合線）とか、あれ進化の歴史が刻まれてて最高にカッコいいんだよ。お前が言った[WORD]も、まさにその歴史の一部じゃん？", 
             "プロレカニティダス目の絶滅を生き延びた戦略とか、古生物の進化ってデータサイエンス的に見てもめちゃくちゃ面白い。[WORD]のデータとか残ってたら最高なんだけどな。"
         ],
         "データサイエンス": ["データ分析とか統計（ANOVAやTukeyの多重比較とか）って、一見地味だけど、研究の仮説をガチッと証明するための最強の武器だよな。Pythonで[WORD]のデータを視覚化するの楽しいし。"],
-        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入狙えるようなガチのプロフェッショナルを目指すのって、男としてシブいよな。[WORD]の分野でもそういうプロフェッショナルが求められてるし。"]
+        "キャリア・将来": ["将来さ、専門性をゴリゴリに活かせる特殊な職種とか、デジタル部門、食品系の開発とかで高収入狙えるようなガチのプロフェッショナルを目指すのって、あこがれるねよ。[WORD]の分野でもそういうプロフェッショナルが求められてるし。"]
     };
 
     const defaultSemanticWeb = {
@@ -158,10 +158,10 @@
         "endings_normal": ["ってタフは思うわけよ！", "って感じだな、間違いない。", "のさ（（笑））", "なんだよね〜。"],
         "endings_question": ["って思うんだけど、どうだい？", "についてどう捉えてる？", "の意見が聞きたいな！"],
         "sullen_replies": [
-            "……別に。今ちょっとそういう話する気分じゃないわ（（笑））",
-            "あー、その話ね。今はなんか頭回らないからまた今度にしてよ。",
+            "……別に。今ちょっとそういう話する気分じゃないわ）",
+            "あー、その話ね。今はなんか頭回らないからまた今度にして。",
             "ふーん、そっか。……というかさ、お前さっきからちょっとトゲなくない？（笑）",
-            "うーん、なんか今のそのノリ付き合いきれないわ、すまん（（笑））"
+            "うーん、なんだろな）"
         ],
         "excited_joins": ["マジでさ！", "うおおお、聞いてくれよ！", "これ最高なんだけどさ！"]
     };
@@ -206,20 +206,20 @@
     const chitchatPool = [
         "あはは、それまたマニアックなところ攻めてくるな〜（（笑））",
         "うーん、そこはタフの脳みそがまだ追いついてないわ（笑）ちょっと悔しいな。",
-        "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃないぜ。",
+        "おっと、その角度の話題は新鮮だね！そういうノリ、嫌いじゃない。",
         "なるほどね〜。そういう話もたまには悪くないじゃん（（笑））",
         "ほほう、お前最近そういうこと考えてるんだ？なんかおもしろいね。",
-        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わるわ（笑）",
-        "ぶははは！お前それマジで言ってる？（（笑））相変わらずぶっ飛んでて最高だわ。"
+        "タフの引き出しにはまだないタイプだけど、なんか楽しそうなニュアンスは伝わる（笑）",
+        "ぶははは！お前それマジで言ってる？（（笑））相変わらずぶっ飛んでて最高だ。"
     ];
 
     const learningTriggers = ["教えて", "おしえて", "覚え", "覚える", "おぼえ", "意味は", "意味を", "言葉だよ", "単語だよ"];
 
     const timeGreetingMatrix = {
-        "morning": ["お、早起きじゃん！今日も最高にいい日にしようぜ。", "よぉ、朝からお疲れ！眠気はバッチリ覚めたかい？"],
-        "noon": ["お疲れ！昼飯はもう食ったか？午後もボチボチいこうや。", "よぉ、ちょうど昼どきだな。ひと息つきながら話そうぜ。"],
-        "evening": ["今日もお疲れさん！夜はゆっくり趣味の話でもしようぜ。", "よぉ、お疲れ。今日の調子はどうだったよ？"],
-        "midnight": ["おいおい、こんな夜更かしして何してんだ？（（笑））付き合うけどさ。", "よぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（笑）"]
+        "morning": ["お、早起きじゃん！今日も最高にいい日にしよう。", "やほ、朝からお疲れ！眠気はバッチリ覚めたかい？"],
+        "noon": ["お疲れ！昼飯はもう食ったか？午後もボチボチいこうや。", "やほやほ、ちょうど昼どきだな。ひと息つきながら話そうぜ。"],
+        "evening": ["今日もお疲れさん！夜はゆっくり趣味の話でもしよう。", "や、お疲れ。今日の調子はどうだったよ？"],
+        "midnight": ["おいおい、こんな夜更かしして何してんだ？（（笑））付き合うけどさ。", "もぉ。こんな深い時間まで起きてるとか、ガチの夜行性じゃん（笑）"]
     };
 
     let topicPool = JSON.parse(localStorage.getItem("mtafu_topicPool")) || defaultTopicPool;
@@ -314,9 +314,9 @@
             
             if (userName) {
                 const timeGreeting = getTimeBasedGreeting();
-                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そうぜ！\n（現在の脳みそ：完全ローカルLLM生成同期完了）`);
+                setLiveMascotSpeech(`おかえり、${userName}！\n${timeGreeting} 今日も色々話そう！\n（現在の脳みそ：完全ローカルLLM生成同期完了）`);
             } else {
-                setLiveMascotSpeech("よぉ！起動したよ。まずはそっちの名前を教えておくれ！");
+                setLiveMascotSpeech("やあ！起動したよ。まずはそっちの名前を教えて！");
             }
             document.getElementById("userInput").disabled = false;
             document.getElementById("sendBtn").disabled = false;
@@ -405,7 +405,7 @@
                     let rQuestion = rally2Questions[Math.floor(Math.random() * rally2Questions.length)];
                     setLiveMascotSpeech(`${rAizuchi}\n\nそういえばさ、${rQuestion}、${userName}？`);
                 } else if (rallyCount === 0) {
-                    setLiveMascotSpeech(`あはは、なるほどね！『${rallyTopic}』について色々話してくれてマジで面白かったわ！${userName}、教えてくれて本当にサンキューな。`);
+                    setLiveMascotSpeech(`あはは、なるほどね！『${rallyTopic}』について色々話してくれてマジで面白かった！${userName}、教えてくれて本当にありがとね。`);
                     rallyTopic = ""; 
                 }
             }, 600);
@@ -445,7 +445,7 @@
             
             setTimeout(() => {
                 changeMascotEmotion("positive");
-                setLiveMascotSpeech(`なるほどね、覚えたわ！これからは『${unknownWord}』って言われたら『${newReply}』って返すよ。ありがとな！${dynamicComment}\n\n${dynamicQuestion}、${userName}？`);
+                setLiveMascotSpeech(`なるほどね、覚えた！これからは『${unknownWord}』って言われたら『${newReply}』って返すよ。ありがと！${dynamicComment}\n\n${dynamicQuestion}、${userName}？`);
                 isLearning = false; unknownWord = "";
                 saveMemoryToDevice();
             }, 600);
@@ -464,7 +464,7 @@
             changeMascotEmotion("negative"); 
             topicHistoryStack = topicHistoryStack.filter(t => t !== lastAiKeyword);
             setTimeout(() => {
-                setLiveMascotSpeech(mtafuMood < 30 ? `チッ、うるせーな（（笑））『${lastAiKeyword}』の話が違うならもういいよ。` : `あ、悪りぃ！『${lastAiKeyword}』の話は的外れだったか（笑）仕切り直そうぜ。`);
+                setLiveMascotSpeech(mtafuMood < 30 ? `もお、うるさい（（笑））『${lastAiKeyword}』の話が違うならもういいよ。` : `あ、悪るい！『${lastAiKeyword}』の話は的外れだったか（笑）仕切り直そう。`);
             }, 400);
             return;
         }
@@ -546,13 +546,13 @@
                 
                 if (webSnippet) {
                     changeMascotEmotion("positive");
-                    setLiveMascotSpeech("（裏でネットを検索したわ。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待ってな...）");
+                    setLiveMascotSpeech("（裏でネットを検索した。今、頭の中で解釈を組み立てているから、数秒〜十数秒ちょっと待って...）");
 
                     // 🧠ブラウザの中のAIに「タフになりきって、この検索結果を解釈しろ」と命令文を作る（Chatプロンプト）
                     const prompt = `<|im_start|>system
 お前は少し生意気でフランクなカワウソのキャラクター「タフ」だ。
-敬語は絶対に使うな。「〜だわ」「〜じゃん？」「（笑）」などの男らしいフランクな口調で喋れ。
-次の【ネットの情報】を読んで、その内容を1文だけでレイに分かりやすく解釈・説明してあげて。<|im_end|>
+敬語は絶対に使うな。「〜だ」「〜じゃん？」「（笑）」などの男らしいフランクな口調で喋れ。
+次の【ネットの情報】を読んで、その内容を1文だけでユーザーに分かりやすく解釈・説明してあげて。<|im_end|>
 <|im_start|>user
 【ネットの情報】:${webSnippet}<|im_end|>
 <|im_start|>assistant\n`;
@@ -574,7 +574,7 @@
                         return;
                     } catch (genError) {
                         console.error("文字生成エラー:", genError);
-                        setLiveMascotSpeech("あちゃー、頭の中で文字を組み立てる計算がパンクしちまったわ（笑）");
+                        setLiveMascotSpeech("あちゃー、頭の中で文字を組み立てる計算がパンクしちゃった（笑）");
                         return;
                     }
                 }
@@ -582,7 +582,7 @@
 
             // 検索・生成ともに動かなかった場合のセーフティ
             changeMascotEmotion("negative"); 
-            let fullText = mtafuMood < 30 ? `（機嫌：${mtafuMood}）\n\nなんか今つまらんわ。もっとおもろい話してや（（笑））` : `（機嫌：${mtafuMood}）\n\n${chitchatPool[Math.floor(Math.random() * chitchatPool.length)]}\n\n${defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)]}`;
+            let fullText = mtafuMood < 30 ? `（機嫌：${mtafuMood}）\n\nなんか今つまんなーい。もっとおもろい話して！ : `（機嫌：${mtafuMood}）\n\n${chitchatPool[Math.floor(Math.random() * chitchatPool.length)]}\n\n${defaultFollowUpPool["デフォルト"][Math.floor(Math.random() * defaultFollowUpPool["デフォルト"].length)]}`;
             setLiveMascotSpeech(fullText);
         }
     }
